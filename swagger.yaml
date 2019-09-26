@@ -1,0 +1,110 @@
+swagger: '2.0'
+info:
+  version: '0.0.1'
+  title: Herald
+  description: Cheops telegram chat groups notifier
+schemes:
+  - http
+host: herald.sirius.online
+basePath: /api/v1/
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /messages/{chatName}:
+    post:
+      tags: [message]
+      operationId: Create
+      parameters:
+        - name: message
+          in: body
+          schema:
+            $ref: '#/definitions/Message'
+        - name: chatName
+          in: path
+          required: true
+          type: string
+      responses:
+        201:
+          description: Message Created
+          schema:
+            $ref: '#/definitions/Message'
+        400:
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/error"
+        500:
+          description: Something went wrang
+          schema:
+            $ref: "#/definitions/error"
+        default:
+          description: Unxpected Error
+          schema:
+            $ref: "#/definitions/error"
+  /chats:
+    get:
+      tags: [chat]
+      operationId: List
+      responses:
+        200:
+          description: Chat list
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Chat"
+        400:
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/error"
+        500:
+          description: Something went wrang
+          schema:
+            $ref: "#/definitions/error"
+        default:
+          description: Unxpected Error
+          schema:
+            $ref: "#/definitions/error"
+definitions:
+  Message:
+    type: object
+    required:
+      - body
+    properties:
+      id:
+        type: integer
+        format: int64
+        readOnly: true
+        example: -12345678
+      body:
+        type: string
+        minLength: 1
+      kind:
+        type: string
+        default: markdown
+  Chat:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        readOnly: true
+        example: -12345678
+      name:
+        type: string
+        readOnly: true
+        example: "test-group-chat"
+      token:
+        type: string
+        readOnly: true
+        example: "12345678:AAEPflbLLeLgrBX-LDts0dqgjWh9x4PVwYc"
+  error:
+    type: object
+    required:
+      - message
+    properties:
+      code:
+        type: integer
+        format: int64
+      message:
+        type: string
